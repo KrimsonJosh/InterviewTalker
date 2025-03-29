@@ -4,14 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 import os
-import asyncio
-import json
-import base64
 
 from dotenv import load_dotenv
 from openai import OpenAI
-from websockets.client import connect  
-from websockets.exceptions import ConnectionClosed  
 import httpx
 
 load_dotenv()  

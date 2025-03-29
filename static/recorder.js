@@ -1,4 +1,3 @@
-let socket;
 let mediaRecorder;
 let audioChunks = [];
 
@@ -14,7 +13,6 @@ async function startRecording() {
             } 
         });
         
-        // Check supported MIME types
         const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
             ? 'audio/webm;codecs=opus'
             : 'audio/webm';
