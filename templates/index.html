@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Helper basic mvp</title>
+</head>
+<body>
+    <h2>Behavioral Interview Assistant</h2>
+    <form method="post" action="/generate">
+        <label>Resume:</label><br>
+        <textarea name="resume" rows="10" cols="80">{{ resume or '' }}</textarea><br><br>
+
+        <label>Question:</label><br>
+        <input type="text" name="question" size="80" value="{{ question or '' }}"><br><br>
+
+        <input type="submit" value="Generate Answer">
+    </form>
+
+    {% if response %}
+        <h3>Generated STAR Response:</h3>
+        <pre>{{ response }}</pre>
+    {% endif %}
+</body>
+</html>
