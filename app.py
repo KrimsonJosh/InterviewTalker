@@ -23,7 +23,8 @@ DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY", "YOUR_DEEPGRAM_KEY_HERE")
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
+# Variable for Electron 
+latest_response = {"response": ""}
 """
 ---------
 HELPER FUNCTION: build_prompt
@@ -88,7 +89,7 @@ async def generate_response(request: Request,
     
     # Extract the generated text
     star_output = response.choices[0].message.content
-
+    latest_response["response"] = star_output
     # Render the same page with the AI response
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -96,6 +97,15 @@ async def generate_response(request: Request,
         "question": question,
         "response": star_output
     })
+"""
+--------
+/latest ROUTE 
+--------
+Accepts nothing. Returns latest_response from generate_response
+"""
+@app.get("/latest", response_class=JSONResponse)
+async def get_latest_response():
+    return latest_response
 
 
 """
