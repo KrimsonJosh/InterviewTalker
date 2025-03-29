@@ -1,23 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Interview Helper basic mvp</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewTalker - AI Interview Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .primary-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .secondary-button {
+            background-color: #f1f5f9;
+            color: var(--text-color);
+        }
+
+        .secondary-button:hover {
+            background-color: #e2e8f0;
+        }
+
+        .recording-status {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #dc2626;
+        }
+
+        .recording-status.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #dc2626;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .response-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .response-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .response-content {
+            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+    </style>
 </head>
 <body>
-    <h2>Behavioral Interview Assistant</h2>
-    <form method="post" action="/generate">
-        <label>Resume:</label><br>
-        <textarea name="resume" rows="10" cols="80">{{ resume or '' }}</textarea><br><br>
+    <div class="container">
+        <div class="header">
+            <h1>InterviewTalker</h1>
+            <p>Your AI-powered interview preparation assistant</p>
+        </div>
 
-        <label>Question:</label><br>
-        <input type="text" name="question" size="80" value="{{ question or '' }}"><br><br>
+        <div class="recording-status" id="recordingStatus">
+            <div class="recording-dot"></div>
+            <span>Recording in progress...</span>
+        </div>
 
-        <input type="submit" value="Generate Answer">
-    </form>
+        <form method="post" action="/generate">
+            <div class="form-group">
+                <label for="resume">Your Resume</label>
+                <textarea id="resume" name="resume" placeholder="Paste your resume text here...">{{ resume or '' }}</textarea>
+            </div>
 
-    {% if response %}
-        <h3>Generated STAR Response:</h3>
-        <pre>{{ response }}</pre>
-    {% endif %}
+            <div class="form-group">
+                <label for="question">Interview Question</label>
+                <input type="text" id="question" name="question" placeholder="Your question will appear here after recording..." value="{{ question or '' }}">
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="secondary-button" onclick="startRecording()">Start Recording</button>
+                <button type="button" class="secondary-button" onclick="stopRecording()">Stop Recording</button>
+                <button type="submit" class="primary-button">Generate AI Response</button>
+            </div>
+        </form>
+
+        {% if response %}
+        <div class="response-section">
+            <h2>STAR Answer</h2>
+            <div class="response-content">{{ response }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/recorder.js"></script>
+    <script>
+        // Update recording status UI
+        function updateRecordingStatus(isRecording) {
+            const statusElement = document.getElementById('recordingStatus');
+            if (isRecording) {
+                statusElement.classList.add('active');
+            } else {
+                statusElement.classList.remove('active');
+            }
+        }
+
+        // Override the original functions to update UI
+        const originalStartRecording = startRecording;
+        startRecording = async function() {
+            updateRecordingStatus(true);
+            await originalStartRecording();
+        }
+
+        const originalStopRecording = stopRecording;
+        stopRecording = function() {
+            updateRecordingStatus(false);
+            originalStopRecording();
+        }
+    </script>
 </body>
 </html>
