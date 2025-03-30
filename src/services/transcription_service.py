@@ -1,6 +1,6 @@
 import httpx
 from fastapi import HTTPException
-from src.core.config import get_settings
+from src.core.config import get_settings # Load settings
 
 settings = get_settings()
 
