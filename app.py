@@ -1,10 +1,12 @@
-from fastapi import FastAPI, Form, Request, UploadFile, File
+from fastapi import FastAPI, Form, Request, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 import os
+import io
 
+import PyPDF2
 from dotenv import load_dotenv
 from openai import OpenAI
 import httpx
@@ -23,8 +25,24 @@ DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY", "YOUR_DEEPGRAM_KEY_HERE")
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Variable for Electron 
-latest_response = {"response": ""}
+# Hold resume text in memory for now TODO: maybe switch to db 
+resume_storage = {"text": ""}
+"""
+--------
+HELPER FUNCTION: Extract PDF text
+--------
+Extracts all text from a PDF file in bytes using PyPDF2. 
+Returns 1 string with all pages/words concatenated.
+"""
+def extract_pdf_text(pdf_bytes: bytes) -> str:
+    all_text = ""
+    with io.BytesIO(pdf_bytes) as pdf_file:
+        reader = PyPDF2.PdfReader(pdf_file)
+        for page in reader.pages:
+            page_text = page.extract_text() or "" #no text found 
+            all_text += page_text + "\n"
+        return all_text
+
 """
 ---------
 HELPER FUNCTION: build_prompt
@@ -62,6 +80,37 @@ Renders a simple HTML page (index.html) that allows input for the resume and que
 async def form_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+"""
+-------
+/upload_resume ROUTE
+-------
+Handles Extraction of text from a PDF Resume and stores it
+"""
+@app.post("/upload_resume")
+async def upload_resume(file: UploadFile = File(...)):
+    try:
+        if not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="Only PDF files are supported")
+
+        pdf_bytes = await file.read()
+
+        text = extract_pdf_text(pdf_bytes)
+        
+        if not text.strip():
+            raise HTTPException(status_code=400, detail="No text could be extracted from the PDF")
+
+        resume_storage["text"] = text
+        
+        return JSONResponse({
+            "message": "Resume text extracted successfully",
+            "text": text
+        })
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Error processing PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error processing the PDF file")
 
 """
 ---------
@@ -89,7 +138,6 @@ async def generate_response(request: Request,
     
     # Extract the generated text
     star_output = response.choices[0].message.content
-    latest_response["response"] = star_output
     # Render the same page with the AI response
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -97,16 +145,6 @@ async def generate_response(request: Request,
         "question": question,
         "response": star_output
     })
-"""
---------
-/latest ROUTE 
---------
-Accepts nothing. Returns latest_response from generate_response
-"""
-@app.get("/latest", response_class=JSONResponse)
-async def get_latest_response():
-    return latest_response
-
 
 """
 ---------

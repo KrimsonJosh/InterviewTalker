@@ -167,6 +167,54 @@
             white-space: pre-wrap;
             font-family: inherit;
         }
+
+        .resume-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .resume-textarea {
+            flex: 1;
+        }
+
+        .resume-upload {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .upload-status {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .upload-status.success {
+            color: #22c55e;
+        }
+
+        .upload-status.error {
+            color: #ef4444;
+        }
     </style>
 </head>
 <body>
@@ -181,10 +229,21 @@
             <span>Recording in progress...</span>
         </div>
 
-        <form method="post" action="/generate">
+        <form method="post" action="/generate" id="mainForm">
             <div class="form-group">
                 <label for="resume">Your Resume</label>
-                <textarea id="resume" name="resume" placeholder="Paste your resume text here...">{{ resume or '' }}</textarea>
+                <div class="resume-input-group">
+                    <div class="resume-textarea">
+                        <textarea id="resume" name="resume" placeholder="Paste your resume text here...">{{ resume or '' }}</textarea>
+                    </div>
+                    <div class="resume-upload">
+                        <label class="file-upload">
+                            <input type="file" id="pdfUpload" accept=".pdf">
+                            <div>📄 Upload PDF Resume</div>
+                        </label>
+                        <div class="upload-status" id="uploadStatus"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -230,6 +289,47 @@
         stopRecording = function() {
             updateRecordingStatus(false);
             originalStopRecording();
+        }
+
+        // Handle PDF upload
+        document.getElementById('pdfUpload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                updateUploadStatus('Please select a PDF file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                updateUploadStatus('Uploading...', '');
+                const response = await fetch('/upload_resume', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateUploadStatus('PDF uploaded successfully!', 'success');
+                    // Update the textarea with the extracted text
+                    document.getElementById('resume').value = data.text || '';
+                } else {
+                    updateUploadStatus(data.detail || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                updateUploadStatus('Error uploading file', 'error');
+                console.error('Upload error:', error);
+            }
+        });
+
+        function updateUploadStatus(message, type) {
+            const statusElement = document.getElementById('uploadStatus');
+            statusElement.textContent = message;
+            statusElement.className = 'upload-status ' + type;
         }
     </script>
 </body>
