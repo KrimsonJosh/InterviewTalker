@@ -2,7 +2,7 @@ import httpx
 from fastapi import HTTPException
 from src.core.config import get_settings
 
-settings = get_settings() # Load config
+settings = get_settings()
 
 class TranscriptionService:
     @staticmethod

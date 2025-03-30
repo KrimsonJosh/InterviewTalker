@@ -1,7 +1,7 @@
 from openai import OpenAI
 from src.core.config import get_settings
 
-settings = get_settings() # Load config
+settings = get_settings()
 
 class AIService:
     def __init__(self):

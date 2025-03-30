@@ -11,10 +11,10 @@ def create_app() -> FastAPI:
         debug=settings.DEBUG
     )
 
-    # Mount static files, serves files from static/ folder
+    # Mount static files
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
-    # Include routers from src/api/routes
+    # Include routers
     app.include_router(router)
 
     return app
