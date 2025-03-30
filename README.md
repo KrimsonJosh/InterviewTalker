@@ -35,3 +35,25 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
 ├── requirements.txt
 └── README.md                  # This file
 ```
+
+---
+
+## TODO
+
+- [ ] **System Input**
+  - Explore ways to capture system audio (virtual audio cable)
+  - Optional: add Electron frontend for stealthy modeee
+
+- [ ] **More file support**
+  - Handle DOCX and other resume formats
+
+- [ ] **Multilingual Support**
+  - Enable resume parsing and AI responses in different languages
+  - Detect resume language and route through appropriate GPT translation or prompt
+
+- [ ] **Storage Upgrade**
+  - Swap in-memory storage for a database (Postgres, sqlite, etc.)
+  - Save user uploads and transcripts securely
+
+- [ ] **User Accounts**
+  - Let users log in and save their resume
