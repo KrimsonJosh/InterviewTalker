@@ -3,7 +3,7 @@
 InterviewTalker is a FastAPI application that helps you practice behavioral interviews with AI assistance. It supports:
 - **Uploading a PDF resume** for AI-based question answering.
 - **Recording audio** and transcribing it via Deepgram.
-- **Generating STAR-format responses** using OpenAI.
+- **Generating STAR-format responses** using OpenAI GPT.
 
 ---
 
@@ -15,7 +15,8 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
    ```bash
    pip install -r requirements.txt
 
-.
+## Project Structure
+```
 ├── src/
 │   ├── api/
 │   │   └── routes.py          # API endpoints for uploading resume, transcribing audio, generating answers
@@ -33,3 +34,4 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
 │   └── index.html             # Main HTML page
 ├── requirements.txt
 └── README.md                  # This file
+```
