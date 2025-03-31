@@ -14,6 +14,7 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
 
    ```bash
    pip install -r requirements.txt
+   uvicorn src.main:app --reload
 
 ## Project Structure
 ```
