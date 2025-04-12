@@ -21,15 +21,21 @@ async function fetchFromAPI(endpoint, options = {}) {
     }
 }
 
-// Example API functions
+// API functions
 async function uploadResume(file) {
     const formData = new FormData();
     formData.append('file', file);
     
-    return await fetchFromAPI('/upload_resume', {
+    const response = await fetch(`${API_BASE_URL}/upload_resume`, {
         method: 'POST',
         body: formData,
     });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
 }
 
 async function getQuestions() {

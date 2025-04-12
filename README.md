@@ -25,22 +25,32 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
 ## Project Structure
 ```
 .
-├── electron // frontend
-│   ├── index.html
-│   ├── main.js
-│   ├── package.json
-│   └── renderer.js
+├── backend
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── api
+│   │   │   └── routes.py
+│   │   ├── core
+│   │   │   └── config.py
+│   │   ├── main.py
+│   │   ├── services
+│   │   │   ├── ai_service.py
+│   │   │   ├── pdf_service.py
+│   │   │   └── transcription_service.py
+│   │   └── utils
+│   └── static
+│       ├── app.js
+│       └── recorder.js
+├── .env
+├── frontend
+│   └── electron
+│       ├── index.html
+│       ├── main.js
+│       ├── package.json
+│       ├── package-lock.json
+│       └── renderer.js
+├── .gitignore
 ├── README.md
-├── requirements.txt
-├── src
-│   ├── api // rest api
-│   ├── core // config
-│   ├── main.py // run
-│   ├── services // gpt, pdf, transcribingw/deepgram
-│   └── utils
-├── static // stuff for recording audio
-│   ├── app.js
-│   └── recorder.js
 ```
 
 ---

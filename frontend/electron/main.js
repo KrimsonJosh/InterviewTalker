@@ -9,7 +9,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: true,
             contextIsolation: false,
-            webSecurity: false, // TODO: Change later when outside dev
+            webSecurity: false, // TODO: change when outside dev
         },
     });
 
@@ -23,7 +23,8 @@ function createWindow() {
         });
     });
 
-    win.loadFile("index.html");
+    // Load the index.html file
+    win.loadFile(path.join(__dirname, "index.html"));
 }
 
 app.whenReady().then(createWindow);
