@@ -13,28 +13,34 @@ InterviewTalker is a FastAPI application that helps you practice behavioral inte
 2. **Install Requirements**:
 
    ```bash
+   python -m venv venv
    pip install -r requirements.txt
    uvicorn src.main:app --reload
 
+   ON A SEPERATE TERMINAL
+   npm i
+   npm start
+
+
 ## Project Structure
 ```
-├── src/
-│   ├── api/
-│   │   └── routes.py          # API endpoints for uploading resume, transcribing audio, generating answers
-│   ├── core/
-│   │   └── config.py          # Pydantic-based settings (API keys, debug mode, etc.)
-│   ├── main.py                # FastAPI app creation (mount static files, include router)
-│   ├── services/
-│   │   ├── ai_service.py      # Handles OpenAI GPT logic
-│   │   ├── pdf_service.py     # Extracts text from PDFs
-│   │   └── transcription_service.py
-│   └── ...
-├── static/
-│   └── recorder.js            # Front-end script for recording microphone audio in the browser
-├── templates/
-│   └── index.html             # Main HTML page
+.
+├── electron // frontend
+│   ├── index.html
+│   ├── main.js
+│   ├── package.json
+│   └── renderer.js
+├── README.md
 ├── requirements.txt
-└── README.md                  # This file
+├── src
+│   ├── api // rest api
+│   ├── core // config
+│   ├── main.py // run
+│   ├── services // gpt, pdf, transcribingw/deepgram
+│   └── utils
+├── static // stuff for recording audio
+│   ├── app.js
+│   └── recorder.js
 ```
 
 ---
