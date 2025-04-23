@@ -1,4 +1,4 @@
-# InterviewTalker
+# InterviewTalker (discontinued because of cluely :( )
 
 InterviewTalker is a FastAPI application that helps you practice behavioral interviews with AI assistance. It supports:
 - **Uploading a PDF resume** for AI-based question answering.
